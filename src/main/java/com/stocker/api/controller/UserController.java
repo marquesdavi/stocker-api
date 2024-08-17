@@ -1,6 +1,7 @@
 package com.stocker.api.controller;
 
 import com.stocker.api.domain.dto.user.UserRequest;
+import com.stocker.api.domain.dto.user.UserResponse;
 import com.stocker.api.domain.entity.User;
 import com.stocker.api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,13 +21,14 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@PreAuthorize("hasAuthority('SCOPE_ADMIN')")
 @Tag(name = "User", description = "User management")
 public class UserController {
     private final UserService userService;
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create a new user")
+    @Operation(summary = "Create a new user (Staff Exclusive)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created"),
             @ApiResponse(responseCode = "400", description = "Invalid input")
@@ -46,7 +48,6 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "List of users"),
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public List<User> getUsers() {
         try {
             return userService.getUsers();
@@ -55,15 +56,53 @@ public class UserController {
         }
     }
 
-    public void updateUser(@Valid @RequestBody UserRequest user) {
-
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Updates an user by its ID (Staff Exclusive)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public void updateUser(
+            @Valid @RequestBody UserRequest user,
+            @PathVariable UUID id) {
+        try {
+            userService.updateUser(user, id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    public void deleteUserById(@PathVariable UUID id) {
-
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Deletes an user by its ID (Staff Exclusive)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public void deleteUserById(@PathVariable(name = "id") UUID id) {
+        try {
+            userService.deleteUser(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    public User getUserById(@PathVariable UUID id) {
-        return null;
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get an user by its ID (Staff Exclusive)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public UserResponse getUserById(@PathVariable(name = "id") UUID id) {
+        try {
+            return userService.getUser(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }

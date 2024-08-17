@@ -1,10 +1,11 @@
 package com.stocker.api.service.impl;
 
-import com.stocker.api.domain.data.repository.UserRepository;
 import com.stocker.api.domain.dto.user.UserRequest;
+import com.stocker.api.domain.dto.user.UserResponse;
 import com.stocker.api.domain.entity.Role;
 import com.stocker.api.domain.entity.User;
-import com.stocker.api.domain.shared.RequestMapper;
+import com.stocker.api.domain.repository.UserRepository;
+import com.stocker.api.domain.shared.DefaultMapper;
 import com.stocker.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,13 +20,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final RequestMapper<User, UserRequest> requestMapper;
+    private final DefaultMapper<User, UserRequest, UserResponse> defaultMapper;
 
     @Override
     public void createUser(UserRequest user) {
         existsByCpfOrEmail(user);
 
-        User instace = requestMapper.toDomain(user);
+        User instace = defaultMapper.toDomain(user);
         instace.setRoles(Set.of(Role.USER));
 
         userRepository.save(instace);
@@ -37,18 +38,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(int id) {
-        return null;
+    public UserResponse getUser(UUID id) {
+        return defaultMapper.toResponse(findById(id));
     }
 
     @Override
-    public void updateUser(UserRequest user) {
+    public void updateUser(UserRequest user, UUID id) {
+        User instace = findById(id);
 
+        if (user.name() != null) {
+            instace.setName(user.name());
+        }
+
+        if (user.email() != null) {
+            instace.setEmail(user.email());
+        }
+        if (user.password() != null) {
+            instace.setPassword(user.password());
+        }
+
+        if (user.cpf() != null) {
+            instace.setCpf(user.cpf());
+        }
+
+        userRepository.save(instace);
     }
 
     @Override
-    public void deleteUser(int id) {
-
+    public void deleteUser(UUID id) {
+        User instance = findById(id);
+        userRepository.delete(instance);
     }
 
     public User findById(UUID id) {

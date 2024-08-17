@@ -1,6 +1,6 @@
 package com.stocker.api.service.impl;
 
-import com.stocker.api.domain.data.repository.UserRepository;
+import com.stocker.api.domain.repository.UserRepository;
 import com.stocker.api.domain.dto.auth.LoginRequest;
 import com.stocker.api.domain.dto.auth.TokenResponse;
 import com.stocker.api.domain.entity.Role;
