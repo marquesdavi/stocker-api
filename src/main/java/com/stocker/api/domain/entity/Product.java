@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,9 +18,10 @@ public class Product {
     private UUID id;
     private String name;
     private String description;
-    private BigDecimal currentPrice;
-    private BigDecimal promotionalPrice;
+    private BigDecimal price;
     private Integer stockQuantity;
+    private LocalDate expirationDate;
+    private BigDecimal discount;
     private Category category;
 
     @DBRef

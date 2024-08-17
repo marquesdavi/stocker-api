@@ -20,6 +20,7 @@ public class Customer {
     private String cpf;
     private LocalDate birthDate;
     private BigDecimal customerTime;
+    private BigDecimal customerDiscount;
 
     @DBRef
     private List<Movement> movements;

@@ -3,7 +3,6 @@ package com.stocker.api.service.impl;
 import com.stocker.api.domain.dto.user.UserRequest;
 import com.stocker.api.domain.entity.Role;
 import com.stocker.api.domain.entity.User;
-import com.stocker.api.domain.mapper.UserMapper;
 import com.stocker.api.domain.repository.RoleRepository;
 import com.stocker.api.domain.repository.UserRepository;
 import com.stocker.api.domain.shared.RequestMapper;
@@ -59,13 +58,13 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    public User findById(UUID id){
+    public User findById(UUID id) {
         return userRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
     }
 
-    public void existsByCpfOrEmail(UserRequest user){
+    public void existsByCpfOrEmail(UserRequest user) {
         userRepository.findByCpf(user.cpf()).ifPresent(existingUser -> {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         });

@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,7 +17,7 @@ public class Movement {
     private UUID id;
 
     @DBRef
-    private Product product;
+    private List<Product> product;
 
     @DBRef
     private User user;
