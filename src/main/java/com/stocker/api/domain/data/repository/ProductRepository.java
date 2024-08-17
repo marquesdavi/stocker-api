@@ -1,4 +1,4 @@
-package com.stocker.api.domain.repository;
+package com.stocker.api.domain.data.repository;
 
 import com.stocker.api.domain.entity.Product;
 import org.springframework.data.mongodb.repository.MongoRepository;

@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -28,7 +29,6 @@ public class User implements Serializable {
     @DBRef
     private List<Movement> movements;
 
-    @DBRef
     private Set<Role> roles;
 
     public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {

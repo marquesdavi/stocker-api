@@ -60,7 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(AUTH_WHITE_LIST).permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
