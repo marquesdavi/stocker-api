@@ -21,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+//@PreAuthorize("hasAuthority('SCOPE_ADMIN')")
 @Tag(name = "User", description = "User management")
 public class UserController {
     private final UserService userService;
