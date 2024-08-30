@@ -4,6 +4,7 @@ import com.stocker.api.domain.dto.auth.LoginRequest;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +23,9 @@ public class User implements Serializable {
     @Id
     private UUID id;
     private String name;
+    @Indexed(unique = true)
     private String email;
+    @Indexed(unique = true)
     private String cpf;
     private String password;
 

@@ -2,6 +2,7 @@ package com.stocker.api.domain.entity;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
@@ -17,10 +18,12 @@ public class Customer {
     @Id
     private UUID id;
     private String name;
+    @Indexed(unique = true)
     private String cpf;
     private LocalDate birthDate;
     private BigDecimal customerTime;
-    private BigDecimal customerDiscount;
+    private BigDecimal totalPurchaseValue;
+    private BigDecimal discountPercentage;
 
     @DBRef
     private List<Movement> movements;

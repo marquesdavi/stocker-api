@@ -1,5 +1,6 @@
 package com.stocker.api.service.impl;
 
+import com.stocker.api.config.security.IAuthenticationFacade;
 import com.stocker.api.domain.dto.user.UserRequest;
 import com.stocker.api.domain.dto.user.UserResponse;
 import com.stocker.api.domain.entity.Role;
@@ -9,6 +10,7 @@ import com.stocker.api.domain.shared.DefaultMapper;
 import com.stocker.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,6 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final IAuthenticationFacade authenticationFacade;
     private final DefaultMapper<User, UserRequest, UserResponse> defaultMapper;
 
     @Override
@@ -84,5 +87,14 @@ public class UserServiceImpl implements UserService {
         userRepository.findByEmail(user.email()).ifPresent(existingUser -> {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         });
+    }
+
+    public User getAuthenticatedUserOrElseThrow() {
+        Authentication currentUser = authenticationFacade.getAuthentication();
+        UUID userId = UUID.fromString(currentUser.getName());
+
+        return userRepository.findById(userId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        );
     }
 }
