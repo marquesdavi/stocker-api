@@ -1,12 +1,19 @@
+version: '3'
 services:
   mongodb:
-    image: 'mongo:latest'
+    image: mongo:latest
+    container_name: mongodb
     environment:
-      - 'MONGO_INITDB_DATABASE=stocker-db'
-      - 'MONGO_INITDB_ROOT_PASSWORD=password'
-      - 'MONGO_INITDB_ROOT_USERNAME=admin'
+      MONGO_INITDB_DATABASE: stocker-db
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
     ports:
-      - '27017:27017'
+      - "27017:27017"
+    volumes:
+      - ./data/db:/data/db
+    networks:
+      - mongo-network
+    command: --auth
 
   mongo-express:
     image: 'mongo-express:latest'
@@ -14,11 +21,17 @@ services:
     ports:
       - '8081:8081'
     environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
-      - ME_CONFIG_MONGODB_SERVER=mongodb
-      - ME_CONFIG_BASICAUTH_USERNAME=admin
-      - ME_CONFIG_BASICAUTH_PASSWORD=password
-      - ME_CONFIG_MONGODB_PORT=27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+      ME_CONFIG_MONGODB_PORT: 27017
     depends_on:
       - mongodb
+    networks:
+      - mongo-network
+
+networks:
+  mongo-network:
+    driver: bridge

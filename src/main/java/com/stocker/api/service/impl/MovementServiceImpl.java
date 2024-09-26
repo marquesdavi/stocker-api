@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -96,6 +97,17 @@ public class MovementServiceImpl implements MovementService {
         Movement movement = getMovementByIdOrElseThrow(id);
 
         movementRepository.delete(movement);
+    }
+
+    public void calculateDiscountPercentage(Customer customer){
+        boolean customerTime = customer.getCreationDate().isBefore(LocalDate.now().minusDays(365));
+        BigDecimal purchaseBase = new BigDecimal(1000);
+
+        boolean totalPurchaseValue = customer.getTotalPurchaseValue().compareTo(purchaseBase) > 0;
+
+        if (customerTime && totalPurchaseValue) {
+
+        }
     }
 
     private void validateMovementRequest(MovementRequest request) {

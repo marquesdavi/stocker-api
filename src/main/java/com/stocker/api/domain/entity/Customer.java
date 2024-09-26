@@ -21,7 +21,7 @@ public class Customer {
     @Indexed(unique = true)
     private String cpf;
     private LocalDate birthDate;
-    private BigDecimal customerTime;
+    private LocalDate creationDate;
     private BigDecimal totalPurchaseValue;
     private BigDecimal discountPercentage;
 
