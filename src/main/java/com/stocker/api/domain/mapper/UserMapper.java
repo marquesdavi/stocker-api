@@ -22,6 +22,7 @@ public class UserMapper implements DefaultMapper<User, UserRequest, UserResponse
                 .name(user.name())
                 .password(encoder.encode(user.password()))
                 .email(user.email())
+                .cpf(user.cpf())
                 .build();
     }
 
@@ -43,6 +44,7 @@ public class UserMapper implements DefaultMapper<User, UserRequest, UserResponse
                 .password(user.getPassword())
                 .email(user.getEmail())
                 .cpf(user.getCpf())
+                .roles(user.getRoles())
                 .build();
     }
 }
