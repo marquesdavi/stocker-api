@@ -28,11 +28,23 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void updateCustomer(UUID id, CustomerRequest request) {
         Customer existingCustomer = findCustomerByIdOrElseThrow(id);
-        existingCustomer.setName(request.getName());
-        existingCustomer.setCpf(request.getCpf());
-        existingCustomer.setBirthDate(request.getBirthDate());
-        existingCustomer.setTotalPurchaseValue(request.getTotalPurchaseValue());
-        existingCustomer.setDiscountPercentage(request.getDiscountPercentage());
+
+        if (request.getName() != null) {
+            existingCustomer.setName(request.getName());
+        }
+        if (request.getCpf() != null) {
+            existingCustomer.setCpf(request.getCpf());
+        }
+        if (request.getBirthDate() != null) {
+            existingCustomer.setBirthDate(request.getBirthDate());
+        }
+        if (request.getTotalPurchaseValue() != null) {
+            existingCustomer.setTotalPurchaseValue(request.getTotalPurchaseValue());
+        }
+        if (request.getDiscountPercentage() != null) {
+            existingCustomer.setDiscountPercentage(request.getDiscountPercentage());
+        }
+
         customerRepository.save(existingCustomer);
     }
 

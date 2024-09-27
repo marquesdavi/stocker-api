@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 //@PreAuthorize("hasAuthority('SCOPE_ADMIN')")
 @Tag(name = "User", description = "User management")
 public class UserController {

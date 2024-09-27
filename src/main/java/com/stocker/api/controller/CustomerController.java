@@ -55,9 +55,9 @@ public class CustomerController {
         return customerService.findCustomerById(id);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Update a customer")
+    @Operation(summary = "Update a customer partially")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customer updated"),
             @ApiResponse(responseCode = "404", description = "Customer not found")
@@ -65,6 +65,7 @@ public class CustomerController {
     public void updateCustomer(@PathVariable UUID id, @Valid @RequestBody CustomerRequest customerRequest) {
         customerService.updateCustomer(id, customerRequest);
     }
+
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

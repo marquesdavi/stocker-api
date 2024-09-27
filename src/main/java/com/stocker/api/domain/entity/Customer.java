@@ -24,7 +24,8 @@ public class Customer implements Serializable {
     @Indexed(unique = true)
     private String cpf;
     private LocalDate birthDate;
-    private LocalDate creationDate;
+    @Builder.Default
+    private LocalDate creationDate = LocalDate.now();
     private BigDecimal totalPurchaseValue;
     private BigDecimal discountPercentage;
 
