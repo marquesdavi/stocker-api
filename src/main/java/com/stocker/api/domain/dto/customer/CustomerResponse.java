@@ -1,53 +1,22 @@
 package com.stocker.api.domain.dto.customer;
 
+import lombok.Builder;
+import lombok.Data;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
-public class CustomerResponse {
+@Data
+@Builder
+public class CustomerResponse implements Serializable {
+
+    private UUID id;
     private String name;
     private String cpf;
     private LocalDate birthDate;
-    private BigDecimal customerTime;
-    private BigDecimal customerDiscount;
-
-    // Getters e Setters
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public BigDecimal getCustomerTime() {
-        return customerTime;
-    }
-
-    public void setCustomerTime(BigDecimal customerTime) {
-        this.customerTime = customerTime;
-    }
-
-    public BigDecimal getCustomerDiscount() {
-        return customerDiscount;
-    }
-
-    public void setCustomerDiscount(BigDecimal customerDiscount) {
-        this.customerDiscount = customerDiscount;
-    }
+    private LocalDate creationDate;
+    private BigDecimal totalPurchaseValue;
+    private BigDecimal discountPercentage;
 }

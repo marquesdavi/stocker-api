@@ -1,119 +1,80 @@
 package com.stocker.api.controller;
 
-
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.stocker.api.domain.entity.Customer;
 import com.stocker.api.domain.dto.customer.CustomerRequest;
 import com.stocker.api.domain.dto.customer.CustomerResponse;
 import com.stocker.api.service.CustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/customer")
+@RequiredArgsConstructor
+@RequestMapping("/api/customers")
+@Tag(name = "Customer", description = "Customer management")
 public class CustomerController {
 
-//    @Autowired
-//    private CustomerService customerService;
+    private final CustomerService customerService;
 
-    // Endpoint para cadastrar cliente
-//    @PostMapping
-//    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody CustomerRequest customerRequest) {
-//
-//        Customer customer = convertToEntity(customerRequest);
-//        //customerService.createCustomer(customer);
-//
-//        CustomerResponse response = convertToResponse(customer);
-//        return ResponseEntity.ok(response);
-//    }
+    @PostMapping("/")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create a new customer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Customer created"),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
+    public void createCustomer(@Valid @RequestBody CustomerRequest customerRequest) {
+        customerService.createCustomer(customerRequest);
+    }
 
-    // Endpoint para obter cliente por ID
-//    @GetMapping("/{id}")
-//    public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable UUID id) {
-//        Customer customer = customerService.findCustomerById(id);
-//        if (customer == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        CustomerResponse response = convertToResponse(customer);
-//        return ResponseEntity.ok(response);
-//    }
+    @GetMapping("/")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "List all customers")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of customers")
+    })
+    public List<CustomerResponse> getAllCustomers() {
+        return customerService.findAllCustomers();
+    }
 
-    // Endpoint para obter cliente por CPF
-//    @GetMapping("/cpf/{cpf}")
-//    public ResponseEntity<CustomerResponse> getCustomerByCpf(@PathVariable String cpf) {
-//        Customer customer = customerService.findCustomerByCpf(cpf);
-//        if (customer == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        CustomerResponse response = convertToResponse(customer);
-//        return ResponseEntity.ok(response);
-//
-//    }
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get a customer by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Customer found"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
+    public CustomerResponse getCustomerById(@PathVariable UUID id) {
+        return customerService.findCustomerById(id);
+    }
 
-    // Endpoint para atualizar dados do cliente
-//    @PutMapping("/{id}")
-//    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable UUID id, @RequestBody CustomerRequest customerRequest) {
-//        Customer customer = convertToEntity(customerRequest);
-//        customer.setId(id);
-//        customerService.updateCustomer(customer);
-//        CustomerResponse response = convertToResponse(customer);
-//        return ResponseEntity.ok(response);
-//    }
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update a customer partially")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Customer updated"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
+    public void updateCustomer(@PathVariable UUID id, @Valid @RequestBody CustomerRequest customerRequest) {
+        customerService.updateCustomer(id, customerRequest);
+    }
 
-    // Endpoint para remover cliente
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
-//        Customer customer = customerService.findCustomerById(id);
-//        if (customer == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        customerService.deleteCustomer(customer);
-//        return ResponseEntity.noContent().build();
-//    }
 
-    // Métodos auxiliares para conversão entre DTO e entidade
-
-//    private Customer convertToEntity(CustomerRequest request) {
-//        if (request == null) {
-//            return null;
-//        }
-//
-//        Customer customer = new Customer();
-//        customer.setName(request.getName());
-//        customer.setCpf(request.getCpf());
-//        customer.setBirthDate(request.getBirthDate());
-//        customer.setCustomerTime(request.getCustomerTime());
-//        //customer.setCustomerDiscount(request.getCustomerDiscount());
-//        customer.setDiscountPercentage(request.getCustomerDiscount());
-//
-//
-//        return customer;
-//    }
-//
-//    private CustomerResponse convertToResponse(Customer customer) {
-//        if (customer == null) {
-//            return null;
-//        }
-//
-//        CustomerResponse response = new CustomerResponse();
-//        response.setName(customer.getName());
-//        response.setCpf(customer.getCpf());
-//        response.setBirthDate(customer.getBirthDate());
-//        response.setCustomerTime(customer.getCustomerTime());
-//        response.setCustomerDiscount(customer.getDiscountPercentage());
-//
-//
-//        return response;
-//    }
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete a customer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Customer deleted"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
+    public void deleteCustomer(@PathVariable UUID id) {
+        customerService.deleteCustomer(id);
+    }
 }

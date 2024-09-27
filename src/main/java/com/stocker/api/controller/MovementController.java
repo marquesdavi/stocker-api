@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/movements")
+@RequestMapping("/api/movements")
 @Tag(name = "Movement", description = "Movement management")
 public class MovementController {
 
