@@ -3,6 +3,7 @@ package com.stocker.api.domain.entity;
 import com.stocker.api.domain.dto.auth.LoginRequest;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,7 +11,6 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -28,6 +28,7 @@ public class User implements Serializable {
     @Indexed(unique = true)
     private String cpf;
     private String password;
+    private UserStatus status;
 
     @DBRef
     private List<Movement> movements;
@@ -36,5 +37,17 @@ public class User implements Serializable {
 
     public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(loginRequest.password(), this.password);
+    }
+
+    @Getter
+    public enum UserStatus {
+        ACTIVE(1L),
+        INACTIVE(2L);
+
+        private final Long id;
+
+        UserStatus(Long id) {
+            this.id = id;
+        }
     }
 }
