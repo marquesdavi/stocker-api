@@ -33,6 +33,8 @@ public class Customer implements Serializable {
     private List<Movement> movements;
 
     public int getPurchasesInLastSixMonths() {
+        if (this.movements == null) return 0;
+
         LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
         return (int) movements.stream()
                 .filter(movement -> movement.getDate().toLocalDate().isAfter(sixMonthsAgo) && movement.getMovementType() == Movement.MovementType.SALE)

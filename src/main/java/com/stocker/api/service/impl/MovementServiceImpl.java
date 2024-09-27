@@ -13,6 +13,7 @@ import com.stocker.api.domain.repository.ProductRepository;
 import com.stocker.api.domain.shared.DefaultMapper;
 import com.stocker.api.exception.exceptions.ResourceNotFoundException;
 import com.stocker.api.service.MovementService;
+import com.stocker.api.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,7 @@ public class MovementServiceImpl implements MovementService {
     private final CustomerRepository customerRepository;
     private final UserServiceImpl userService;
     private final ProductRepository productRepository;
+    private final ProductService productService;
     private final DefaultMapper<Movement, MovementRequest, MovementResponse> defaultMapper;
 
 
@@ -44,9 +46,13 @@ public class MovementServiceImpl implements MovementService {
         User user = userService.getAuthenticatedUserOrElseThrow();
         Customer customer = getCustomerByIdOrElseThrow(request.customerId());
 
-        calculateDiscountPercentage(customer);
+        if (request.customerId() != null) {
+            calculateDiscountPercentage(customer);
+        }
 
-        List<Product> products = validateAndProcessProducts(request.items());
+        List<Product> products = validateAndProcessProducts(request.items(), request.movementType());
+
+        productService.saveMultiple(products);
 
         BigDecimal totalValue = calculateTotalMovementValue(products, request.items());
 
@@ -125,16 +131,22 @@ public class MovementServiceImpl implements MovementService {
         }
     }
 
-    private List<Product> validateAndProcessProducts(List<MovementItemDTO> items) {
+    private List<Product> validateAndProcessProducts(List<MovementItemDTO> items, Movement.MovementType movementType) {
         return items.stream()
                 .map(item -> {
                     Product product = getProductByIdOrElseThrow(item.product());
 
-                    if (product.getStockQuantity() < item.amount()) {
+                    if (movementType.name().equals(Movement.MovementType.SALE.name())
+                            && product.getStockQuantity() < item.amount()) {
                         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You do not have enough stock");
                     }
 
-                    product.setStockQuantity(product.getStockQuantity() - item.amount());
+                    if (movementType.name().equals(Movement.MovementType.SALE.name())) {
+                        product.setStockQuantity(product.getStockQuantity() - item.amount());
+                        return product;
+                    }
+
+                    product.setStockQuantity(product.getStockQuantity() + item.amount());
 
                     return product;
                 })

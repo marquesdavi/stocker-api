@@ -8,9 +8,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProductService {
-    void createProduct(Product product);
+    void createProduct(ProductRequest product);
     ProductResponse getProductById(UUID id);
     List<ProductResponse> getProducts();
     void updateProduct(UUID id, ProductRequest product);
     void deleteProduct(UUID id);
+    void saveMultiple(List<Product> products);
 }

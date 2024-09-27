@@ -50,12 +50,13 @@ public class MovementMapper implements DefaultMapper<Movement, MovementRequest, 
     public MovementResponse toResponse(Movement movement) {
         return MovementResponse.builder()
                 .id(movement.getId())
-                .userId(movement.getUser().getId())
-                .customerId(movement.getCustomer().getId())
+                .userId(movement.getUser() != null ? movement.getUser().getId() : null)
+                .customerId(movement.getCustomer() != null ? movement.getCustomer().getId() : null)
                 .movementType(movement.getMovementType())
                 .date(movement.getDate())
                 .totalValue(movement.getTotalValue())
                 .totalDiscountValue(movement.getTotalDiscountValue())
                 .build();
     }
+
 }

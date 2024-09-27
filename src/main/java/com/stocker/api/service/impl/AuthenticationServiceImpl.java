@@ -5,6 +5,7 @@ import com.stocker.api.domain.dto.auth.LoginRequest;
 import com.stocker.api.domain.dto.auth.TokenResponse;
 import com.stocker.api.domain.entity.Role;
 import com.stocker.api.domain.entity.User;
+import com.stocker.api.exception.exceptions.ResourceNotFoundException;
 import com.stocker.api.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public TokenResponse login(LoginRequest request) {
         Optional<User> user = userRepository.findByEmail(request.email());
+
+        if (user.isPresent() && user.get().getStatus().name().equals("INACTIVE")) {
+            throw new ResourceNotFoundException("User not found!");
+        }
 
         if (user.isEmpty() || !user.get().isLoginCorrect(request, passwordEncoder)) {
             throw new BadCredentialsException("User or password is invalid!");
