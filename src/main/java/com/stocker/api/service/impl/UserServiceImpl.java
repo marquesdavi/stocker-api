@@ -7,6 +7,7 @@ import com.stocker.api.domain.entity.Role;
 import com.stocker.api.domain.entity.User;
 import com.stocker.api.domain.repository.UserRepository;
 import com.stocker.api.domain.shared.DefaultMapper;
+import com.stocker.api.exception.exceptions.ResourceNotFoundException;
 import com.stocker.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,18 +37,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getUsers() {
+        return userRepository.findAll().stream().map(defaultMapper::toResponse).toList();
     }
 
     @Override
     public UserResponse getUser(UUID id) {
-        return defaultMapper.toResponse(findById(id));
+        return defaultMapper.toResponse(findByIdOrElseThrow(id));
     }
 
     @Override
     public void updateUser(UserRequest user, UUID id) {
-        User instace = findById(id);
+        User instace = findByIdOrElseThrow(id);
 
         if (user.name() != null) {
             instace.setName(user.name());
@@ -69,13 +70,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(UUID id) {
-        User instance = findById(id);
+        User instance = findByIdOrElseThrow(id);
         userRepository.delete(instance);
     }
 
-    public User findById(UUID id) {
+    public User findByIdOrElseThrow(UUID id) {
         return userRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+                () -> new ResourceNotFoundException("User not found")
         );
     }
 
@@ -93,8 +94,6 @@ public class UserServiceImpl implements UserService {
         Authentication currentUser = authenticationFacade.getAuthentication();
         UUID userId = UUID.fromString(currentUser.getName());
 
-        return userRepository.findById(userId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
-        );
+        return findByIdOrElseThrow(userId);
     }
 }

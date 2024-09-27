@@ -1,34 +1,48 @@
 package com.stocker.api.domain.mapper;
 
+import com.stocker.api.domain.dto.movement.MovementItemDTO;
 import com.stocker.api.domain.dto.movement.MovementRequest;
 import com.stocker.api.domain.dto.movement.MovementResponse;
-import com.stocker.api.domain.dto.user.UserRequest;
-import com.stocker.api.domain.dto.user.UserResponse;
+import com.stocker.api.domain.entity.Customer;
 import com.stocker.api.domain.entity.Movement;
+import com.stocker.api.domain.entity.Product;
 import com.stocker.api.domain.entity.User;
 import com.stocker.api.domain.shared.DefaultMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class MovementMapper implements DefaultMapper<Movement, MovementRequest, MovementResponse> {
 
     @Override
-    public Movement toDomain(MovementRequest user) {
+    public Movement toDomain(MovementRequest movementRequest) {
         return Movement.builder()
                 .id(UUID.randomUUID())
-
+                .movementType(movementRequest.movementType())
+                .products(movementRequest.items().stream()
+                        .map(item -> Product.builder()
+                                .id(item.product())
+                                .build())
+                        .collect(Collectors.toList()))
                 .build();
     }
 
     @Override
     public MovementRequest toRequest(Movement movement) {
         return MovementRequest.builder()
-
+                .customerId(movement.getCustomer().getId())
+                .movementType(movement.getMovementType())
+                .items(movement.getProducts().stream()
+                        .map(product -> MovementItemDTO.builder()
+                                .product(product.getId())
+                                .amount(1)
+                                .build())
+                        .collect(Collectors.toList()))
                 .build();
     }
 

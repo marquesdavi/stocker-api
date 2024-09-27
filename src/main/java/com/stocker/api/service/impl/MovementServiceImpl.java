@@ -13,6 +13,7 @@ import com.stocker.api.domain.repository.CustomerRepository;
 import com.stocker.api.domain.repository.MovementRepository;
 import com.stocker.api.domain.repository.ProductRepository;
 import com.stocker.api.domain.repository.UserRepository;
+import com.stocker.api.exception.exceptions.ResourceNotFoundException;
 import com.stocker.api.service.MovementService;
 import com.stocker.api.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,9 @@ public class MovementServiceImpl implements MovementService {
         validateMovementRequest(request);
 
         User user = userService.getAuthenticatedUserOrElseThrow();
-        Customer customer = request.customerId() != null ? getCustomerByIdOrElseThrow(request.customerId()) : null;
+        Customer customer = getCustomerByIdOrElseThrow(request.customerId());
+
+        calculateDiscountPercentage(customer);
 
         List<Product> products = validateAndProcessProducts(request.items());
 
@@ -99,16 +102,22 @@ public class MovementServiceImpl implements MovementService {
         movementRepository.delete(movement);
     }
 
-    public void calculateDiscountPercentage(Customer customer){
-        boolean customerTime = customer.getCreationDate().isBefore(LocalDate.now().minusDays(365));
-        BigDecimal purchaseBase = new BigDecimal(1000);
+    public void calculateDiscountPercentage(Customer customer) {
+        boolean isLongTermCustomer = customer.getCreationDate().isBefore(LocalDate.now().minusYears(1));
 
-        boolean totalPurchaseValue = customer.getTotalPurchaseValue().compareTo(purchaseBase) > 0;
+        int purchasesInLastSixMonths = customer.getPurchasesInLastSixMonths();
 
-        if (customerTime && totalPurchaseValue) {
-
+        if (isLongTermCustomer && purchasesInLastSixMonths >= 5) {
+            customer.setDiscountPercentage(new BigDecimal("10.00"));
+        } else if (isLongTermCustomer && purchasesInLastSixMonths >= 3) {
+            customer.setDiscountPercentage(new BigDecimal("5.00"));
+        } else {
+            return;
         }
+
+        customerRepository.save(customer);
     }
+
 
     private void validateMovementRequest(MovementRequest request) {
         if (request.movementType() == null) {
@@ -148,16 +157,18 @@ public class MovementServiceImpl implements MovementService {
 
     public Movement getMovementByIdOrElseThrow(UUID id) {
         return movementRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movement not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Movement not found"));
     }
 
     public Customer getCustomerByIdOrElseThrow(UUID id) {
+        if (id == null) return null;
+
         return customerRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
     }
 
     public Product getProductByIdOrElseThrow(UUID id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     }
 }

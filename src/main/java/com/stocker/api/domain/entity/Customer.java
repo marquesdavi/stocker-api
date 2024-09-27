@@ -27,4 +27,11 @@ public class Customer {
 
     @DBRef
     private List<Movement> movements;
+
+    public int getPurchasesInLastSixMonths() {
+        LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
+        return (int) movements.stream()
+                .filter(movement -> movement.getDate().toLocalDate().isAfter(sixMonthsAgo) && movement.getMovementType() == Movement.MovementType.SALE)
+                .count();
+    }
 }
