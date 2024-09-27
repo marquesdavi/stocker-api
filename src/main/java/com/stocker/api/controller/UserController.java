@@ -81,4 +81,15 @@ public class UserController {
     public UserResponse getUserById(@PathVariable(name = "id") UUID id) {
         return userService.getUser(id);
     }
+
+    @GetMapping("/current")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Returns the current logged user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User found"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public UserResponse getCurrentLoggedInUser() {
+        return userService.getCurrentUser();
+    }
 }
