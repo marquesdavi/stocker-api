@@ -4,9 +4,9 @@ import com.stocker.api.domain.entity.Role;
 import lombok.Builder;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import com.stocker.api.domain.entity.User.UserStatus;
 
 @Builder
 public record UserResponse(
@@ -15,6 +15,7 @@ public record UserResponse(
         String email,
         String cpf,
         String password,
+        UserStatus status,
         Set<Role> roles
 ) implements Serializable {
 }

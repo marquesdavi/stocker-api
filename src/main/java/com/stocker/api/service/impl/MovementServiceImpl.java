@@ -1,6 +1,5 @@
 package com.stocker.api.service.impl;
 
-import com.stocker.api.config.security.IAuthenticationFacade;
 import com.stocker.api.domain.dto.movement.MovementItemDTO;
 import com.stocker.api.domain.dto.movement.MovementRequest;
 import com.stocker.api.domain.dto.movement.MovementResponse;
@@ -8,18 +7,15 @@ import com.stocker.api.domain.entity.Customer;
 import com.stocker.api.domain.entity.Movement;
 import com.stocker.api.domain.entity.Product;
 import com.stocker.api.domain.entity.User;
-import com.stocker.api.domain.mapper.MovementMapper;
 import com.stocker.api.domain.repository.CustomerRepository;
 import com.stocker.api.domain.repository.MovementRepository;
 import com.stocker.api.domain.repository.ProductRepository;
-import com.stocker.api.domain.repository.UserRepository;
+import com.stocker.api.domain.shared.DefaultMapper;
 import com.stocker.api.exception.exceptions.ResourceNotFoundException;
 import com.stocker.api.service.MovementService;
-import com.stocker.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -38,7 +34,7 @@ public class MovementServiceImpl implements MovementService {
     private final CustomerRepository customerRepository;
     private final UserServiceImpl userService;
     private final ProductRepository productRepository;
-    private final MovementMapper movementMapper;
+    private final DefaultMapper<Movement, MovementRequest, MovementResponse> defaultMapper;
 
 
     @Override
@@ -68,13 +64,13 @@ public class MovementServiceImpl implements MovementService {
     @Override
     public List<MovementResponse> getMovements() {
         return movementRepository.findAll().stream()
-                .map(movementMapper::toResponse)
+                .map(defaultMapper::toResponse)
                 .toList();
     }
 
     @Override
     public MovementResponse getMovementById(UUID id) {
-        return movementMapper.toResponse(getMovementByIdOrElseThrow(id));
+        return defaultMapper.toResponse(getMovementByIdOrElseThrow(id));
     }
 
     @Override

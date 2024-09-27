@@ -47,25 +47,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse getCurrentUser() {
+        return defaultMapper.toResponse(getAuthenticatedUserOrElseThrow());
+    }
+
+    @Override
     public void updateUser(UserRequest user, UUID id) {
-        User instace = findByIdOrElseThrow(id);
+        User instance = findByIdOrElseThrow(id);
 
         if (user.name() != null) {
-            instace.setName(user.name());
+            instance.setName(user.name());
         }
 
         if (user.email() != null) {
-            instace.setEmail(user.email());
+            instance.setEmail(user.email());
         }
+
         if (user.password() != null) {
-            instace.setPassword(user.password());
+            instance.setPassword(user.password());
         }
 
         if (user.cpf() != null) {
-            instace.setCpf(user.cpf());
+            instance.setCpf(user.cpf());
         }
 
-        userRepository.save(instace);
+        if (user.status() != null) {
+            instance.setStatus(user.status());
+        }
+
+        userRepository.save(instance);
     }
 
     @Override
