@@ -106,9 +106,6 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User found"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @Caching(evict = {
-            @CacheEvict(value = "user-find-all", allEntries = true)
-    })
     public UserResponse getCurrentLoggedInUser() {
         return userService.getCurrentUser();
     }
