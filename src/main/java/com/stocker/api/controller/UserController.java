@@ -24,11 +24,11 @@ import java.util.UUID;
 @RequestMapping("/api/user")
 @Tag(name = "User", description = "User management")
 public class UserController {
-
     private final UserService userService;
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @Operation(summary = "Create a new user (Staff Exclusive)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created"),
@@ -41,6 +41,7 @@ public class UserController {
 
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @Operation(summary = "List all users (Staff Exclusive)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of users")
@@ -52,6 +53,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @Operation(summary = "Update a user by its ID (Staff Exclusive)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User updated"),
@@ -70,6 +72,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @Operation(summary = "Delete a user by its ID (Staff Exclusive)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User deleted"),
@@ -85,6 +88,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @Operation(summary = "Get a user by its ID (Staff Exclusive)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found"),
