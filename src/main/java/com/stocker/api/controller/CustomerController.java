@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +33,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "201", description = "Customer created"),
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
+    @CacheEvict(value = "customer-find-all", allEntries = true)
     public void createCustomer(@Valid @RequestBody CustomerRequest customerRequest) {
         customerService.createCustomer(customerRequest);
     }
@@ -40,6 +44,7 @@ public class CustomerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of customers")
     })
+    @Cacheable(value = "customer-find-all")
     public List<CustomerResponse> getAllCustomers() {
         return customerService.findAllCustomers();
     }
@@ -51,6 +56,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "200", description = "Customer found"),
             @ApiResponse(responseCode = "404", description = "Customer not found")
     })
+    @Cacheable(value = "customer-find-by-id", key = "#id")
     public CustomerResponse getCustomerById(@PathVariable UUID id) {
         return customerService.findCustomerById(id);
     }
@@ -61,6 +67,10 @@ public class CustomerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customer updated"),
             @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
+    @Caching(evict = {
+            @CacheEvict(value = "customer-find-by-id", key = "#id"),
+            @CacheEvict(value = "customer-find-all", allEntries = true)
     })
     public void updateCustomer(@PathVariable UUID id, @Valid @RequestBody CustomerRequest customerRequest) {
         customerService.updateCustomer(id, customerRequest);
@@ -73,6 +83,10 @@ public class CustomerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Customer deleted"),
             @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
+    @Caching(evict = {
+            @CacheEvict(value = "customer-find-by-id", key = "#id"),
+            @CacheEvict(value = "customer-find-all", allEntries = true)
     })
     public void deleteCustomer(@PathVariable UUID id) {
         customerService.deleteCustomer(id);

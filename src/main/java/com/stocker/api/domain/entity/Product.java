@@ -26,6 +26,8 @@ public class Product implements Serializable {
     private LocalDate expirationDate;
     private BigDecimal productDiscount;
     private Category category;
+    @Builder.Default
+    private LocalDate creationDate = LocalDate.now();
 
     @DBRef
     private List<Movement> movements;

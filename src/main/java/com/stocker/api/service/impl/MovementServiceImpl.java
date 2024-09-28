@@ -120,7 +120,6 @@ public class MovementServiceImpl implements MovementService {
         customerRepository.save(customer);
     }
 
-
     private void validateMovementRequest(MovementRequest request) {
         if (request.movementType() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You must provide a movement type");

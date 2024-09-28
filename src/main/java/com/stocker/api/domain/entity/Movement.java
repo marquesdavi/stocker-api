@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -36,8 +37,8 @@ public class Movement implements Persistable<UUID>, Serializable {
     private BigDecimal totalValue;
 
     private MovementType movementType;
-    @CreatedDate
-    private LocalDateTime date;
+    @Builder.Default
+    private LocalDateTime date = LocalDateTime.now();
 
     @Override
     public boolean isNew() {

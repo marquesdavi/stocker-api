@@ -6,6 +6,7 @@ import com.stocker.api.domain.entity.Category;
 import com.stocker.api.domain.entity.Product;
 import com.stocker.api.domain.mapper.ProductMapper;
 import com.stocker.api.domain.repository.ProductRepository;
+import com.stocker.api.exception.exceptions.ResourceNotFoundException;
 import com.stocker.api.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse getProductById(UUID id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Product product = findProductByIdOrElseThrow(id);
         return productMapper.toResponse(product);
     }
 
@@ -43,8 +43,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void updateProduct(UUID id, ProductRequest request) {
-        Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Product existingProduct = findProductByIdOrElseThrow(id);
 
         if (request.name() != null) existingProduct.setName(request.name());
         if (request.description() != null) existingProduct.setDescription(request.description());
@@ -59,13 +58,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(UUID id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Product product = findProductByIdOrElseThrow(id);
         productRepository.delete(product);
     }
 
     @Override
     public void saveMultiple(List<Product> products) {
         productRepository.saveAll(products);
+    }
+
+    public Product findProductByIdOrElseThrow(UUID id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     }
 }

@@ -7,8 +7,11 @@ import com.stocker.api.domain.repository.CustomerRepository;
 import com.stocker.api.domain.shared.DefaultMapper;
 import com.stocker.api.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,8 +24,16 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void createCustomer(CustomerRequest request) {
+        validateCustomer(request);
+
         Customer customer = defaultMapper.toDomain(request);
         customerRepository.save(customer);
+    }
+
+    public void validateCustomer(CustomerRequest request) {
+        if (request.getBirthDate().isAfter(LocalDate.now().minusYears(18L))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The customer must be under legal age!");
+        }
     }
 
     @Override

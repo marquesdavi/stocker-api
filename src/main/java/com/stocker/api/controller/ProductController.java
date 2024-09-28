@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +33,7 @@ public class ProductController {
             @ApiResponse(responseCode = "201", description = "Product created"),
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
+    @CacheEvict(value = "product-find-all", allEntries = true)
     public void createProduct(@Valid @RequestBody ProductRequest productRequest) {
         productService.createProduct(productRequest);
     }
@@ -40,6 +44,7 @@ public class ProductController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of products")
     })
+    @Cacheable(value = "product-find-all")
     public List<ProductResponse> getAllProducts() {
         return productService.getProducts();
     }
@@ -51,6 +56,7 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Product found"),
             @ApiResponse(responseCode = "404", description = "Product not found")
     })
+    @Cacheable(value = "product-find-by-id", key = "#id")
     public ProductResponse getProductById(@PathVariable UUID id) {
         return productService.getProductById(id);
     }
@@ -62,6 +68,10 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Product updated"),
             @ApiResponse(responseCode = "404", description = "Product not found")
     })
+    @Caching(evict = {
+            @CacheEvict(value = "product-find-by-id", key = "#id"),
+            @CacheEvict(value = "product-find-all", allEntries = true)
+    })
     public void updateProduct(@PathVariable UUID id, @Valid @RequestBody ProductRequest productRequest) {
         productService.updateProduct(id, productRequest);
     }
@@ -72,6 +82,10 @@ public class ProductController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Product deleted"),
             @ApiResponse(responseCode = "404", description = "Product not found")
+    })
+    @Caching(evict = {
+            @CacheEvict(value = "product-find-by-id", key = "#id"),
+            @CacheEvict(value = "product-find-all", allEntries = true)
     })
     public void deleteProduct(@PathVariable UUID id) {
         productService.deleteProduct(id);

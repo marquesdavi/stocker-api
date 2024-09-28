@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +33,7 @@ public class MovementController {
             @ApiResponse(responseCode = "201", description = "Movement created"),
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
+    @CacheEvict(value = "movement-find-all", allEntries = true)
     public void createMovement(@Valid @RequestBody MovementRequest movementRequest) {
         movementService.createMovement(movementRequest);
     }
@@ -40,6 +44,7 @@ public class MovementController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of movements")
     })
+    @Cacheable(value = "movement-find-all")
     public List<MovementResponse> getMovements() {
         return movementService.getMovements();
     }
@@ -51,6 +56,10 @@ public class MovementController {
             @ApiResponse(responseCode = "200", description = "Movement updated"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "404", description = "Movement not found")
+    })
+    @Caching(evict = {
+            @CacheEvict(value = "movement-find-by-id", key = "#id"),
+            @CacheEvict(value = "movement-find-all", allEntries = true)
     })
     public void updateMovement(
             @Valid @RequestBody MovementRequest movementRequest,
@@ -65,6 +74,10 @@ public class MovementController {
             @ApiResponse(responseCode = "204", description = "Movement deleted"),
             @ApiResponse(responseCode = "404", description = "Movement not found")
     })
+    @Caching(evict = {
+            @CacheEvict(value = "movement-find-by-id", key = "#id"),
+            @CacheEvict(value = "movement-find-all", allEntries = true)
+    })
     public void deleteMovementById(@PathVariable(name = "id") UUID id) {
         movementService.deleteMovement(id);
     }
@@ -76,6 +89,7 @@ public class MovementController {
             @ApiResponse(responseCode = "200", description = "Movement found"),
             @ApiResponse(responseCode = "404", description = "Movement not found")
     })
+    @Cacheable(value = "movement-find-by-id", key = "#id")
     public MovementResponse getMovementById(@PathVariable(name = "id") UUID id) {
         return movementService.getMovementById(id);
     }

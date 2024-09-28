@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +35,7 @@ public class UserController {
             @ApiResponse(responseCode = "201", description = "User created"),
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
+    @CacheEvict(value = "user-find-all", allEntries = true)
     public void createUser(@Valid @RequestBody UserRequest user) {
         userService.createUser(user);
     }
@@ -42,6 +46,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of users")
     })
+    @Cacheable(value = "user-find-all")
     public List<UserResponse> getUsers() {
         return userService.getUsers();
     }
@@ -53,6 +58,10 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User updated"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @Caching(evict = {
+            @CacheEvict(value = "user-find-by-id", key = "#id"),
+            @CacheEvict(value = "user-find-all", allEntries = true)
     })
     public void updateUser(
             @Valid @RequestBody UserRequest user,
@@ -67,6 +76,10 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "User deleted"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
+    @Caching(evict = {
+            @CacheEvict(value = "user-find-by-id", key = "#id"),
+            @CacheEvict(value = "user-find-all", allEntries = true)
+    })
     public void deleteUserById(@PathVariable(name = "id") UUID id) {
         userService.deleteUser(id);
     }
@@ -78,6 +91,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User found"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
+    @Cacheable(value = "user-find-by-id", key = "#id")
     public UserResponse getUserById(@PathVariable(name = "id") UUID id) {
         return userService.getUser(id);
     }
@@ -88,6 +102,9 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found"),
             @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @Caching(evict = {
+            @CacheEvict(value = "user-find-all", allEntries = true)
     })
     public UserResponse getCurrentLoggedInUser() {
         return userService.getCurrentUser();
