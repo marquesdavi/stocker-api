@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
-import com.stocker.api.domain.entity.User.UserStatus;
+import com.stocker.api.domain.entity.UserStatus;
 
 @Builder
 public record UserResponse(

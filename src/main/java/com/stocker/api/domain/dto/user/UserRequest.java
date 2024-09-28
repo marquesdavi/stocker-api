@@ -3,7 +3,7 @@ package com.stocker.api.domain.dto.user;
 import lombok.Builder;
 
 import java.io.Serializable;
-import com.stocker.api.domain.entity.User.UserStatus;
+import com.stocker.api.domain.entity.UserStatus;
 
 @Builder
 public record UserRequest(

@@ -38,16 +38,4 @@ public class User implements Serializable {
     public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(loginRequest.password(), this.password);
     }
-
-    @Getter
-    public enum UserStatus {
-        ACTIVE(1L),
-        INACTIVE(2L);
-
-        private final Long id;
-
-        UserStatus(Long id) {
-            this.id = id;
-        }
-    }
 }
