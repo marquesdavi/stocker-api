@@ -66,6 +66,7 @@ public class MovementServiceImpl implements MovementService {
                 .movementType(request.movementType())
                 .products(products)
                 .totalValue(totalValue)
+                .movementDiscount(request.movementDiscount())
                 .build();
 
         movementRepository.save(movement);

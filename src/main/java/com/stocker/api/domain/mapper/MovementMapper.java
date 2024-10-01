@@ -24,7 +24,7 @@ public class MovementMapper implements DefaultMapper<Movement, MovementRequest, 
         return Movement.builder()
                 .id(UUID.randomUUID())
                 .movementType(movementRequest.movementType())
-                .movementDiscount(movementRequest.movementDiscount() != null ? movementRequest.movementDiscount() : null)
+                .movementDiscount(movementRequest.movementDiscount() != null ? movementRequest.movementDiscount() : 0)
                 .products(movementRequest.items().stream()
                         .map(item -> Product.builder()
                                 .id(item.product())
