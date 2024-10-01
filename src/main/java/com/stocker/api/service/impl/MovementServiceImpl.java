@@ -110,16 +110,14 @@ public class MovementServiceImpl implements MovementService {
 
     public void calculateDiscountPercentage(Customer customer) {
         boolean isLongTermCustomer = customer.getCreationDate().isBefore(LocalDate.now().minusYears(1));
-        boolean lastDiscountInSixMonths = customer.getLastDiscountDate().isBefore(LocalDate.now().minusMonths(6));
 
         int purchasesInLastSixMonths = customer.getPurchasesInLastSixMonths();
 
-        if (isLongTermCustomer && lastDiscountInSixMonths && purchasesInLastSixMonths >= 5) {
+        if (isLongTermCustomer  && purchasesInLastSixMonths >= 5) {
             customer.setDiscountPercentage(new BigDecimal("10.00"));
-            customer.setLastDiscountDate(LocalDate.now());
-        } else if (isLongTermCustomer && lastDiscountInSixMonths && purchasesInLastSixMonths >= 3) {
+
+        } else if (isLongTermCustomer && purchasesInLastSixMonths >= 3) {
             customer.setDiscountPercentage(new BigDecimal("5.00"));
-            customer.setLastDiscountDate(LocalDate.now());
         } else {
             return;
         }
