@@ -13,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -30,10 +32,23 @@ public class UserServiceImpl implements UserService {
     public void createUser(UserRequest user) {
         existsByCpfOrEmail(user);
 
-        User instace = defaultMapper.toDomain(user);
-        instace.setRoles(Set.of(Role.USER));
+        User instance = defaultMapper.toDomain(user);
+        instance.setRoles(Set.of(Role.USER));
 
-        userRepository.save(instace);
+        userRepository.save(instance);
+    }
+
+    @Override
+    public void uploadProfileImage(UUID id, MultipartFile file) {
+        User user = findByIdOrElseThrow(id);
+
+        try {
+            byte[] imageBytes = file.getBytes();
+            user.setProfileImage(imageBytes);
+            userRepository.save(user);
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao processar a imagem", e);
+        }
     }
 
     @Override
@@ -77,6 +92,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(instance);
     }
+
 
     @Override
     public void deleteUser(UUID id) {

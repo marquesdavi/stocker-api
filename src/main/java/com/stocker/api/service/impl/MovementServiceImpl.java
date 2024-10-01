@@ -54,7 +54,8 @@ public class MovementServiceImpl implements MovementService {
 
         productService.saveMultiple(products);
 
-        BigDecimal totalValue = calculateTotalMovementValue(products, request.items());
+        BigDecimal totalValue = calculateTotalMovementValue(products, request.items())
+                                            .subtract(customer.getDiscountPercentage());
 
         Movement movement = Movement.builder()
                 .customer(customer)

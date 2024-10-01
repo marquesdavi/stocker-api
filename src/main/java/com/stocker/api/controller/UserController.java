@@ -15,6 +15,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,8 +36,27 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
     @CacheEvict(value = "user-find-all", allEntries = true)
-    public void createUser(@Valid @RequestBody UserRequest user) {
+    public void createUser(
+            @Valid @RequestBody UserRequest user
+    ) {
         userService.createUser(user);
+    }
+
+    @PatchMapping("/upload/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update user profile image by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User updated"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @Caching(evict = {
+            @CacheEvict(value = "user-find-by-id", key = "#id"),
+            @CacheEvict(value = "user-find-all", allEntries = true)
+    })
+    public void uploadFile(@PathVariable(name = "id") UUID id,
+                             @RequestPart("file") MultipartFile file) {
+        userService.uploadProfileImage(id, file);
     }
 
     @GetMapping("/")
@@ -65,7 +85,7 @@ public class UserController {
             @CacheEvict(value = "user-find-all", allEntries = true)
     })
     public void updateUser(
-            @Valid @RequestBody UserRequest user,
+            @Valid @RequestPart("user") UserRequest user,
             @PathVariable UUID id) {
         userService.updateUser(user, id);
     }

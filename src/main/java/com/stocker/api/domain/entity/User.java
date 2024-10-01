@@ -3,7 +3,6 @@ package com.stocker.api.domain.entity;
 import com.stocker.api.domain.dto.auth.LoginRequest;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -35,7 +34,10 @@ public class User implements Serializable {
 
     private Set<Role> roles;
 
+    private byte[] profileImage;
+
     public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(loginRequest.password(), this.password);
     }
 }
+

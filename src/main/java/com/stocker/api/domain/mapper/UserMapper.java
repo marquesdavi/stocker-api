@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Base64;
 import java.util.UUID;
 
 @Component
@@ -48,6 +49,7 @@ public class UserMapper implements DefaultMapper<User, UserRequest, UserResponse
                 .cpf(user.getCpf())
                 .status(user.getStatus())
                 .roles(user.getRoles())
+                .profileImage(user.getProfileImage() == null ? null : Base64.getEncoder().encodeToString(user.getProfileImage()))
                 .build();
     }
 }

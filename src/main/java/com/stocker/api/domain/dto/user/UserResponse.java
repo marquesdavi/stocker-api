@@ -16,6 +16,7 @@ public record UserResponse(
         String cpf,
         String password,
         UserStatus status,
-        Set<Role> roles
+        Set<Role> roles,
+        String profileImage
 ) implements Serializable {
 }
