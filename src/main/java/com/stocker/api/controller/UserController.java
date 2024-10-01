@@ -85,7 +85,7 @@ public class UserController {
             @CacheEvict(value = "user-find-all", allEntries = true)
     })
     public void updateUser(
-            @Valid @RequestPart("user") UserRequest user,
+            @RequestBody UserRequest user,
             @PathVariable UUID id) {
         userService.updateUser(user, id);
     }

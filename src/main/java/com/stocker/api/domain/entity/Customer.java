@@ -28,6 +28,7 @@ public class Customer implements Serializable {
     private LocalDate creationDate = LocalDate.now();
     private BigDecimal totalPurchaseValue;
     private BigDecimal discountPercentage;
+    private LocalDate lastDiscountDate;
 
     @DBRef
     private List<Movement> movements;

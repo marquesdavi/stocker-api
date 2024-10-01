@@ -17,6 +17,7 @@ public record MovementResponse(
         Movement.MovementType movementType,
         BigDecimal totalDiscountValue,
         BigDecimal totalValue,
-        LocalDateTime date
+        LocalDateTime date,
+        Double movementDiscount
 ) implements Serializable {
 }

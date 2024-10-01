@@ -12,7 +12,8 @@ import java.util.UUID;
 public record MovementRequest(
         List<MovementItemDTO> items,
         UUID customerId,
-        MovementType movementType
+        MovementType movementType,
+        Double movementDiscount
 ) implements Serializable {
 
 }

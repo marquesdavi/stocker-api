@@ -24,6 +24,7 @@ public class MovementMapper implements DefaultMapper<Movement, MovementRequest, 
         return Movement.builder()
                 .id(UUID.randomUUID())
                 .movementType(movementRequest.movementType())
+                .movementDiscount(movementRequest.movementDiscount() != null ? movementRequest.movementDiscount() : null)
                 .products(movementRequest.items().stream()
                         .map(item -> Product.builder()
                                 .id(item.product())
@@ -56,6 +57,7 @@ public class MovementMapper implements DefaultMapper<Movement, MovementRequest, 
                 .date(movement.getDate())
                 .totalValue(movement.getTotalValue())
                 .totalDiscountValue(movement.getTotalDiscountValue())
+
                 .build();
     }
 

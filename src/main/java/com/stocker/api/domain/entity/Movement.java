@@ -35,6 +35,7 @@ public class Movement implements Persistable<UUID>, Serializable {
     private Customer customer;
     private BigDecimal totalDiscountValue;
     private BigDecimal totalValue;
+    private Double movementDiscount;
 
     private MovementType movementType;
     @Builder.Default
