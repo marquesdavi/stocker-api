@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -57,8 +58,8 @@ public class MovementServiceImpl implements MovementService {
         BigDecimal totalDiscount = customer.getDiscountPercentage()
                                         .add(BigDecimal.valueOf(request.movementDiscount()));
 
-        BigDecimal totalValue = calculateTotalMovementValue(products, request.items())
-                                            .subtract(totalDiscount);
+        BigDecimal totalValue = ((BigDecimal.valueOf(100).subtract(totalDiscount)).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_EVEN))
+                                            .multiply(calculateTotalMovementValue(products, request.items()));
 
         Movement movement = Movement.builder()
                 .customer(customer)
